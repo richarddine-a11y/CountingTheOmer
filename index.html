@@ -1,0 +1,640 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sefirat HaOmer 2026 · ספירת העומר</title>
+<style>
+  :root {
+    --gold: #E8A000;
+    --gold-light: #F5C842;
+    --gold-pale: #FFF8E7;
+    --gold-mid: #FFF0C0;
+    --black: #1a1a1a;
+    --brown: #7a6030;
+    --brown-light: #a08040;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    min-height: 100vh;
+    background: linear-gradient(160deg, var(--gold-pale) 0%, var(--gold-mid) 50%, #FFE080 100%);
+    font-family: Georgia, 'Times New Roman', serif;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding-bottom: 48px;
+  }
+
+  /* ── Header ── */
+  header {
+    width: 100%;
+    background: var(--black);
+    color: var(--gold-light);
+    text-align: center;
+    padding: 18px 20px 14px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+  }
+  header h1 {
+    font-size: clamp(16px, 4vw, 22px);
+    font-weight: 700;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+  }
+  header p {
+    font-size: 17px;
+    margin-top: 4px;
+    opacity: 0.85;
+    font-style: italic;
+  }
+
+  /* ── Banner (pre/post Omer, special days) ── */
+  #status-banner {
+    width: min(480px, 95vw);
+    margin: 20px 0 0;
+    border-radius: 16px;
+    padding: 20px 24px;
+    text-align: center;
+    display: none;
+  }
+  #status-banner.pre  { background: var(--black); color: var(--gold-light); }
+  #status-banner.post { background: var(--gold); color: var(--black); }
+  #status-banner .big-emoji { font-size: 44px; display: block; margin-bottom: 10px; }
+  #status-banner strong { font-size: 18px; display: block; margin-bottom: 6px; }
+  #status-banner span { font-size: 13px; opacity: 0.8; }
+
+  /* ── Card ── */
+  #card {
+    width: min(480px, 95vw);
+    border-radius: 24px;
+    overflow: hidden;
+    box-shadow: 0 8px 40px rgba(0,0,0,0.12);
+    margin: 20px 0 4px;
+    position: relative;
+    border: 3px solid var(--gold);
+    background: var(--gold-pale);
+  }
+
+  #special-banner {
+    background: var(--black);
+    color: var(--gold-light);
+    text-align: center;
+    padding: 10px;
+    font-size: 16px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    display: none;
+  }
+
+  #today-pill {
+    position: absolute;
+    top: 14px; right: 14px;
+    background: var(--black);
+    color: var(--gold-light);
+    font-size: 10px;
+    font-weight: 800;
+    padding: 3px 10px;
+    border-radius: 99px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    display: none;
+    z-index: 10;
+  }
+
+  #card-top {
+    background: var(--gold);
+    padding: 20px 24px 16px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+
+  #day-badge {
+    width: 86px; height: 86px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.35);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    flex-shrink: 0;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.1);
+  }
+  #day-badge .num {
+    font-size: 36px;
+    font-weight: 900;
+    color: var(--black);
+    line-height: 1;
+  }
+  #day-badge .lbl {
+    font-size: 10px;
+    font-weight: 700;
+    color: var(--black);
+    letter-spacing: 1px;
+    text-transform: uppercase;
+  }
+
+  #day-label { flex: 1; }
+  #day-label .of49 {
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--black);
+    opacity: 0.7;
+  }
+  #day-label .week-en {
+    font-size: 12px;
+    color: var(--black);
+    opacity: 0.6;
+    margin-top: 3px;
+    font-style: italic;
+  }
+
+  /* Penguin SVG */
+  #penguin { width: 76px; height: 76px; flex-shrink: 0; }
+
+  #card-body { padding: 24px 24px 28px; }
+
+  #emoji-display {
+    font-size: 54px;
+    display: block;
+    text-align: center;
+    margin-bottom: 16px;
+  }
+
+  #fact-text {
+    font-size: 18px;
+    line-height: 1.55;
+    color: var(--black);
+    font-weight: 500;
+  }
+
+  #source-text {
+    font-size: 12px;
+    color: var(--brown);
+    margin-top: 10px;
+    font-style: italic;
+    letter-spacing: 0.5px;
+  }
+
+  #hebrew-box {
+    margin-top: 20px;
+    padding: 14px 16px;
+    background: rgba(255,255,255,0.5);
+    border-radius: 12px;
+    text-align: center;
+    direction: rtl;
+    border-left: 4px solid var(--gold);
+  }
+  #hebrew-count {
+    font-size: 16px;
+    color: #4a3000;
+    font-weight: 600;
+    display: block;
+  }
+  #hebrew-weeks {
+    font-size: 13px;
+    color: var(--brown);
+    margin-top: 4px;
+    display: block;
+  }
+
+  /* ── Swipe hint ── */
+  .swipe-hint {
+    font-size: 11px;
+    color: var(--brown-light);
+    letter-spacing: 1px;
+    margin: 2px 0 10px;
+  }
+
+  /* ── Nav buttons ── */
+  #nav {
+    display: flex;
+    gap: 10px;
+    width: min(480px, 95vw);
+    margin-bottom: 14px;
+  }
+  .nav-btn {
+    flex: 1;
+    padding: 12px;
+    background: var(--black);
+    color: var(--gold-light);
+    border: none;
+    border-radius: 12px;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    letter-spacing: 1px;
+    font-family: Georgia, serif;
+    transition: opacity 0.15s;
+  }
+  .nav-btn:disabled { opacity: 0.3; cursor: default; }
+  #today-btn {
+    flex: 1;
+    padding: 12px;
+    background: var(--gold);
+    color: var(--black);
+    border: none;
+    border-radius: 12px;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+    letter-spacing: 1px;
+    font-family: Georgia, serif;
+    display: none;
+  }
+
+  /* ── Progress ── */
+  #progress-section {
+    width: min(480px, 95vw);
+    margin-bottom: 18px;
+  }
+  .progress-labels {
+    display: flex;
+    justify-content: space-between;
+    font-size: 12px;
+    color: var(--brown);
+    font-weight: 600;
+    margin-bottom: 6px;
+  }
+  .progress-track {
+    width: 100%;
+    background: #e0d0b0;
+    border-radius: 99px;
+    height: 8px;
+    overflow: hidden;
+  }
+  #progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--gold), var(--gold-light));
+    border-radius: 99px;
+    transition: width 0.6s ease;
+  }
+
+  /* ── Day picker ── */
+  #dots-section {
+    width: min(480px, 95vw);
+  }
+  .dots-title {
+    font-size: 11px;
+    color: var(--brown);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    font-weight: 700;
+    margin-bottom: 8px;
+  }
+  #dots-scroll {
+    overflow-x: auto;
+    padding-bottom: 6px;
+  }
+  #dots-inner {
+    display: flex;
+    gap: 4px;
+    min-width: max-content;
+    padding: 2px 2px 4px;
+  }
+  .dot-btn {
+    width: 28px; height: 28px;
+    border-radius: 50%;
+    border: none;
+    font-size: 10px;
+    font-weight: 600;
+    cursor: pointer;
+    flex-shrink: 0;
+    transition: transform 0.12s, background 0.12s;
+    font-family: Georgia, serif;
+  }
+  .dot-btn.shabbat { background: var(--black); color: var(--gold-light); font-weight: 700; }
+  .dot-btn.regular { background: #e0d0b0; color: #5a4a20; }
+  .dot-btn.active  { background: var(--gold) !important; color: var(--black) !important; font-weight: 900; transform: scale(1.2); }
+
+  /* ── Footer ── */
+  footer {
+    margin-top: 32px;
+    text-align: center;
+    font-size: 12px;
+    color: var(--brown-light);
+  }
+  footer p + p { margin-top: 4px; opacity: 0.7; }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Sefirat HaOmer</h1>
+  <p>ספירת העומר &middot; 2026</p>
+</header>
+
+<div id="status-banner">
+  <span class="big-emoji" id="banner-emoji"></span>
+  <strong id="banner-title"></strong>
+  <span id="banner-body"></span>
+</div>
+
+<div id="card">
+  <div id="special-banner"></div>
+  <div id="today-pill">Today</div>
+  <div id="card-top">
+    <div id="day-badge">
+      <span class="num" id="badge-num">1</span>
+      <span class="lbl">Omer</span>
+    </div>
+    <div id="day-label">
+      <div class="of49" id="of49-text">Day 1 of 49</div>
+      <div class="week-en" id="week-en-text"></div>
+    </div>
+    <svg id="penguin" viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <!-- body -->
+      <ellipse cx="40" cy="52" rx="22" ry="24" fill="#1a1a1a"/>
+      <!-- belly -->
+      <ellipse cx="40" cy="55" rx="13" ry="16" fill="#F5C842"/>
+      <!-- head -->
+      <circle cx="40" cy="28" r="18" fill="#1a1a1a"/>
+      <!-- face -->
+      <ellipse cx="40" cy="30" rx="11" ry="10" fill="#F5C842"/>
+      <!-- eyes -->
+      <circle cx="35" cy="27" r="3" fill="white"/>
+      <circle cx="45" cy="27" r="3" fill="white"/>
+      <circle cx="36" cy="27" r="1.5" fill="#1a1a1a"/>
+      <circle cx="46" cy="27" r="1.5" fill="#1a1a1a"/>
+      <!-- beak -->
+      <ellipse cx="40" cy="33" rx="4" ry="2.5" fill="#E8A000"/>
+      <!-- wings -->
+      <ellipse cx="20" cy="50" rx="7" ry="13" fill="#1a1a1a" transform="rotate(-15 20 50)"/>
+      <ellipse cx="60" cy="50" rx="7" ry="13" fill="#1a1a1a" transform="rotate(15 60 50)"/>
+      <!-- feet -->
+      <ellipse cx="33" cy="74" rx="8" ry="4" fill="#E8A000"/>
+      <ellipse cx="47" cy="74" rx="8" ry="4" fill="#E8A000"/>
+      <!-- party hat (hidden by default, shown on special days) -->
+      <g id="penguin-hat" style="display:none">
+        <rect x="28" y="8" width="24" height="14" rx="2" fill="#E8A000"/>
+        <rect x="24" y="20" width="32" height="3" rx="1" fill="#E8A000"/>
+      </g>
+    </svg>
+  </div>
+  <div id="card-body">
+    <span id="emoji-display"></span>
+    <p id="fact-text"></p>
+    <p id="source-text"></p>
+    <div id="hebrew-box">
+      <span id="hebrew-count"></span>
+      <span id="hebrew-weeks"></span>
+    </div>
+  </div>
+</div>
+
+<p class="swipe-hint">&larr; swipe to navigate &rarr;</p>
+
+<div id="nav">
+  <button class="nav-btn" id="prev-btn" onclick="changeDay(-1)">&larr; Prev</button>
+  <button id="today-btn" onclick="goToToday()">Today: <span id="today-day-num"></span></button>
+  <button class="nav-btn" id="next-btn" onclick="changeDay(1)">Next &rarr;</button>
+</div>
+
+<div id="progress-section">
+  <div class="progress-labels">
+    <span id="prog-left">Day 1</span>
+    <span id="prog-right">2% to Shavuot</span>
+  </div>
+  <div class="progress-track">
+    <div id="progress-fill" style="width:2%"></div>
+  </div>
+</div>
+
+<div id="dots-section">
+  <div class="dots-title">Browse All Days</div>
+  <div id="dots-scroll">
+    <div id="dots-inner"></div>
+  </div>
+</div>
+
+<footer>
+  <p>Based on Hadar&rsquo;s Omer Counter</p>
+  <p>Counting begins each evening at nightfall (~7:30&thinsp;pm ET)</p>
+</footer>
+
+<script>
+// ── Data ─────────────────────────────────────────────────────────────────────
+const DAYS = [
+  { day:1,  emoji:"👂", fact:"\"Hear, Israel, God is our Lord, God is 1.\"", source:"Devarim 6:4", hCount:"היום יום אחד לעומר", hWeeks:"" },
+  { day:2,  emoji:"✌️", fact:"2 are better than one.", source:"Kohelet 4:9", hCount:"היום שני ימים לעומר", hWeeks:"" },
+  { day:3,  emoji:"⚖️", fact:"Rabban Shimon ben Gamliel says, \"The world stands on 3 things: justice, truth, and peace.\"", source:"Mishnah Avot 1:18", hCount:"היום שלשה ימים לעומר", hWeeks:"" },
+  { day:4,  emoji:"🤔", fact:"There are 4 questions in the Seder (mah nishtanah)!", source:"The Haggadah", hCount:"היום ארבעה ימים לעומר", hWeeks:"" },
+  { day:5,  emoji:"📜", fact:"A child should start learning Tanakh by the age of 5.", source:"Mishnah Avot 5:21", hCount:"היום חמישה ימים לעומר", hWeeks:"" },
+  { day:6,  emoji:"📅", fact:"The Torah was given (and Shavuot is celebrated) on the 6th day of Sivan.", source:"Shabbat 88A", hCount:"היום ששה ימים לעומר", hWeeks:"" },
+  { day:7,  emoji:"🕯️", fact:"The 7th day is Shabbat for God.", source:"Shemot 20:9", hCount:"היום שבעה ימים לעומר", hWeeks:"שהם שבוע אחד" },
+  { day:8,  emoji:"👘", fact:"What's your favorite outfit? The Kohen Gadol had 8 special garments to wear!", source:"Shemot 28", hCount:"היום שמונה ימים לעומר", hWeeks:"שהם שבוע אחד ויום אחד" },
+  { day:9,  emoji:"🛏️", fact:"The bed of Og, the giant, was 9 amot (cubits) long — about 13.5 feet!", source:"Devarim 3:11", hCount:"היום תשעה ימים לעומר", hWeeks:"שהם שבוע אחד ושני ימים" },
+  { day:10, emoji:"⛰️", fact:"The 10 \"commandments\" were actually given at Har Sinai as 10 דיברות (utterances).", source:"Shemot 34:28", hCount:"היום עשרה ימים לעומר", hWeeks:"שהם שבוע אחד ושלשה ימים" },
+  { day:11, emoji:"🌿", fact:"The קטורת (ketoret, incense offering) in the Beit HaMikdash contained 11 spices.", source:"Keritot 6A", hCount:"היום אחד עשר יום לעומר", hWeeks:"שהם שבוע אחד וארבעה ימים" },
+  { day:12, emoji:"🏕️", fact:"There are 12 שבטים (shevatim, tribes) of Israel.", source:"Bereishit", hCount:"היום שנים עשר יום לעומר", hWeeks:"שהם שבוע אחד וחמישה ימים" },
+  { day:13, emoji:"👨‍👩‍👧‍👦", fact:"There are 13 letters in the names of the אמהות (imahot, mothers), and 13 letters in the names of the אבות (avot, fathers).", source:"Tradition", hCount:"היום שלשה עשר יום לעומר", hWeeks:"שהם שבוע אחד וששה ימים" },
+  { day:14, emoji:"🍽️", fact:"R. Eliezer says the goal is to eat 14 meals in the sukkah over the holiday of Sukkot.", source:"Mishnah Sukkah 2:6", hCount:"היום ארבעה עשר יום לעומר", hWeeks:"שהם שני שבועות" },
+  { day:15, emoji:"🪜", fact:"There were 15 steps leading from one courtyard to the other in the Beit HaMikdash.", source:"Mishnah Sukkah 5:4", hCount:"היום חמישה עשר יום לעומר", hWeeks:"שהם שני שבועות ויום אחד" },
+  { day:16, emoji:"📏", fact:"A רשות הרבים (reshut harabim, public domain) on Shabbat must be at least 16 amot (cubits) wide — about 24 feet.", source:"Halakhah", hCount:"היום ששה עשר יום לעומר", hWeeks:"שהם שני שבועות ושני ימים" },
+  { day:17, emoji:"💔", fact:"On the 17th of Tammuz: the luhot (tablets) were broken, the daily sacrifice ended, city walls were breached, Apostomos burned the Torah, and an idol was placed in the Temple.", source:"Mishnah Taanit 4:6", hCount:"היום שבעה עשר יום לעומר", hWeeks:"שהם שני שבועות ושלשה ימים" },
+  { day:18, emoji:"🎵", fact:"There are 18 days in the year when full Hallel is said.", source:"Arakhin 10A", hCount:"היום שמונה עשר יום לעומר", hWeeks:"שהם שני שבועות וארבעה ימים" },
+  { day:19, emoji:"🙏", fact:"There are actually 19 blessings in the weekday תפילה (Amidah), even though it is often called שמונה עשרה (Shemonah Esreh), which means 18!", source:"The Talmud", hCount:"היום תשעה עשר יום לעומר", hWeeks:"שהם שני שבועות וחמישה ימים" },
+  { day:20, emoji:"🔨", fact:"The actual age of full adulthood in Judaism is 20 (not 12 or 13). According to Avot 5:21, that is when a person should start working.", source:"Mishnah Avot 5:21", hCount:"היום עשרים יום לעומר", hWeeks:"שהם שני שבועות וששה ימים" },
+  { day:21, emoji:"📖", fact:"A Torah reading on Shabbat morning must have at least 21 פסוקים (pesukim, verses).", source:"Megillah 22A", hCount:"היום אחד ועשרים יום לעומר", hWeeks:"שהם שלשה שבועות" },
+  { day:22, emoji:"✏️", fact:"There are 22 letters in the Aleph Bet.", source:"Tradition", hCount:"היום שנים ועשרים יום לעומר", hWeeks:"שהם שלשה שבועות ויום אחד" },
+  { day:23, emoji:"⚖️", fact:"A Jewish court of law needs 23 judges to carry out some of the most serious cases.", source:"Mishnah Sanhedrin 1:1", hCount:"היום שלשה ועשרים יום לעומר", hWeeks:"שהם שלשה שבועות ושני ימים" },
+  { day:24, emoji:"📚", fact:"There are 24 books in the Hebrew Bible (Tanakh, תנ\"ך).", source:"Tradition", hCount:"היום ארבעה ועשרים יום לעומר", hWeeks:"שהם שלשה שבועות ושלשה ימים" },
+  { day:25, emoji:"🎒", fact:"According to the Gemara, there should not be more than 25 students per teacher in the classroom!", source:"Bava Batra 25A", hCount:"היום חמישה ועשרים יום לעומר", hWeeks:"שהם שלשה שבועות וארבעה ימים" },
+  { day:26, emoji:"🔢", fact:"The גמטריא (gematria, numerical value) of God's four-letter Name, the Tetragrammaton, is 26. (י=10, ה=5, ו=6, ה=5)", source:"Tradition", hCount:"היום ששה ועשרים יום לעומר", hWeeks:"שהם שלשה שבועות וחמישה ימים" },
+  { day:27, emoji:"🌊", fact:"In the second month on the 27th day, the land dried up from the Flood.", source:"Bereishit 8:14", hCount:"היום שבעה ועשרים יום לעומר", hWeeks:"שהם שלשה שבועות וששה ימים" },
+  { day:28, emoji:"🌱", fact:"R. Eliezer ben Hyrcanos was 28 years old when he began learning Torah. So even if you didn't start early — it's never too late!", source:"Pirkei DeRabbi Eliezer", hCount:"היום שמונה ועשרים יום לעומר", hWeeks:"שהם ארבעה שבועות" },
+  { day:29, emoji:"🌙", fact:"29 days is the shortest a Jewish calendar month can be.", source:"Jewish Calendar", hCount:"היום תשעה ועשרים יום לעומר", hWeeks:"שהם ארבעה שבועות ויום אחד" },
+  { day:30, emoji:"😴", fact:"We start learning the laws of a holiday 30 days prior. (There are only 20 days until Shavuot — we better get going!)", source:"Pesahim 6A", hCount:"היום שלשים יום לעומר", hWeeks:"שהם ארבעה שבועות ושני ימים" },
+  { day:31, emoji:"🫓", fact:"The Israelites ate the matzah they took out of Egypt for 31 days.", source:"Mekhilta, Massekhta Devayasa 1", hCount:"היום אחד ושלשים יום לעומר", hWeeks:"שהם ארבעה שבועות ושלשה ימים" },
+  { day:32, emoji:"🔥", fact:"The מזבח (mizbe'ah, altar) in the Temple was 32 amot (cubits) — close to 50 feet.", source:"Mishnah Middot 3:1", hCount:"היום שנים ושלשים יום לעומר", hWeeks:"שהם ארבעה שבועות וארבעה ימים" },
+  { day:33, emoji:"🎆", fact:"Lag BaOmer! Did you know that טוב (tov, good) is the 33rd word in the Torah? Keep up the good work counting!", source:"The Torah", hCount:"היום שלשה ושלשים יום לעומר", hWeeks:"שהם ארבעה שבועות וחמישה ימים", special:"🎉 Lag BaOmer! 🎉" },
+  { day:34, emoji:"📜", fact:"Shabbat is mentioned in 34 פסוקים (pesukim, verses) in the Torah.", source:"Tradition", hCount:"היום ארבעה ושלשים יום לעומר", hWeeks:"שהם ארבעה שבועות וששה ימים" },
+  { day:35, emoji:"✡️", fact:"The numerical value (gematria) of יהודי (Yehudi, Jew) is 35.", source:"Tradition", hCount:"היום חמישה ושלשים יום לעומר", hWeeks:"שהם חמישה שבועות" },
+  { day:36, emoji:"🔔", fact:"According to R. Yehudah bar R. Ilai, the Kohen Gadol had 36 bells on the hem of his robe.", source:"Vayikra Rabbah 21:7", hCount:"היום ששה ושלשים יום לעומר", hWeeks:"שהם חמישה שבועות ויום אחד" },
+  { day:37, emoji:"📗", fact:"The Talmud Bavli (Babylonian Talmud) contains 37 מסכתות (masekhtot, tractates).", source:"The Talmud", hCount:"היום שבעה ושלשים יום לעומר", hWeeks:"שהם חמישה שבועות ושני ימים" },
+  { day:38, emoji:"🏃", fact:"Yehoshua led Benei Yisrael for 38 years.", source:"Yalkut Shimoni, Yehoshua 35", hCount:"היום שמונה ושלשים יום לעומר", hWeeks:"שהם חמישה שבועות ושלשה ימים" },
+  { day:39, emoji:"🏗️", fact:"There are 39 אבות מלאכה (avot melakhah, categories of forbidden Shabbat work). Those same categories were the types of work used in building the משכן (Mishkan).", source:"The Talmud", hCount:"היום תשעה ושלשים יום לעומר", hWeeks:"שהם חמישה שבועות וארבעה ימים" },
+  { day:40, emoji:"⛰️", fact:"Moshe was up on Har Sinai with God for 40 days and 40 nights, not eating bread and not drinking water.", source:"Shemot 34:28", hCount:"היום ארבעים יום לעומר", hWeeks:"שהם חמישה שבועות וחמישה ימים" },
+  { day:41, emoji:"👆", fact:"There are 41 פסוקים (pesukim, verses) in the last parashah of the Torah (VeZot HaBerakhah).", source:"Masoretic Note on the Torah", hCount:"היום אחד וארבעים יום לעומר", hWeeks:"שהם חמישה שבועות וששה ימים" },
+  { day:42, emoji:"🗺️", fact:"Benei Yisrael's journey in the wilderness had 42 stops along the way from Egypt to the Land of Israel.", source:"Bemidbar 33", hCount:"היום שנים וארבעים יום לעומר", hWeeks:"שהם ששה שבועות" },
+  { day:43, emoji:"🧁", fact:"There is a mitzvah to separate some bread dough for kohanim if your dough has a volume of 43⅕ eggs — about 5 lbs.", source:"Zevahim 42A", hCount:"היום שלשה וארבעים יום לעומר", hWeeks:"שהם ששה שבועות ויום אחד" },
+  { day:44, emoji:"🕊️", fact:"After 44 days of being stuck on Mount Ararat, the waters of the Flood dropped enough for Noah to see the mountaintops.", source:"Midrash Lekah Tov, Noah 85", hCount:"היום ארבעה וארבעים יום לעומר", hWeeks:"שהם ששה שבועות ושני ימים" },
+  { day:45, emoji:"⏳", fact:"Shimon HaTzaddik was the Kohen Gadol for 45 years. That's a long time to have one job!", source:"Tradition", hCount:"היום חמישה וארבעים יום לעומר", hWeeks:"שהם ששה שבועות ושלשה ימים" },
+  { day:46, emoji:"💛", fact:"The Torah stresses to treat גרים (gerim, strangers) with kindness 46 times!", source:"Bava Metzia 59B", hCount:"היום ששה וארבעים יום לעומר", hWeeks:"שהם ששה שבועות וארבעה ימים" },
+  { day:47, emoji:"🏔️", fact:"When Benei Yisrael came to Har Sinai, they all camped by the mountain with one heart (כאיש אחד בלב אחד). The numerical value of this phrase is 47!", source:"Tanna DeBei Eliyahu, Pirkei Yeridot 3", hCount:"היום שבעה וארבעים יום לעומר", hWeeks:"שהם ששה שבועות וחמישה ימים" },
+  { day:48, emoji:"🫶", fact:"There are 48 words in the first paragraph of Shema.", source:"Devarim 6:4–9", hCount:"היום שמונה וארבעים יום לעומר", hWeeks:"שהם ששה שבועות וששה ימים" },
+  { day:49, emoji:"🎈", fact:"Hooray! You've just counted 49 days of the Omer! Tomorrow night is Shavuot — the celebration of receiving the Torah!", source:"Vayikra 23", hCount:"היום תשעה וארבעים יום לעומר", hWeeks:"שהם שבעה שבועות", special:"🎉 Shavuot Tomorrow! 🎉" },
+];
+
+// ── Time logic ────────────────────────────────────────────────────────────────
+// Day 1 begins evening of April 2, 2026 at 7:30 PM ET
+// We use local time; users outside ET will be slightly off — acceptable for a personal site
+function getOmerDay() {
+  const now = new Date();
+  const start = new Date("2026-04-02T19:30:00"); // local time interpretation
+  const ms = now - start;
+  if (ms < 0) return 0;           // not started
+  const day = Math.floor(ms / 86400000) + 1;
+  if (day > 49) return 50;        // finished
+  return day;
+}
+
+function formatWeeksEnglish(day) {
+  const w = Math.floor(day / 7), d = day % 7;
+  if (w === 0) return `${day} day${day !== 1 ? "s" : ""}`;
+  if (d === 0) return `${w} week${w !== 1 ? "s" : ""}`;
+  return `${w} week${w !== 1 ? "s" : ""} and ${d} day${d !== 1 ? "s" : ""}`;
+}
+
+// ── State ─────────────────────────────────────────────────────────────────────
+let viewDay = 1;
+const todayOmer = getOmerDay();
+
+// ── Render ────────────────────────────────────────────────────────────────────
+function render() {
+  const e = DAYS[viewDay - 1];
+  const isToday = (viewDay === todayOmer);
+  const isSpecial = !!e.special;
+
+  // Special banner
+  const sb = document.getElementById("special-banner");
+  if (isSpecial) { sb.textContent = e.special; sb.style.display = "block"; }
+  else { sb.style.display = "none"; }
+
+  // Today pill
+  document.getElementById("today-pill").style.display = isToday ? "block" : "none";
+
+  // Badge + labels
+  document.getElementById("badge-num").textContent = e.day;
+  document.getElementById("of49-text").textContent = `Day ${e.day} of 49`;
+  document.getElementById("week-en-text").textContent = formatWeeksEnglish(e.day);
+
+  // Penguin hat
+  document.getElementById("penguin-hat").style.display = isSpecial ? "block" : "none";
+
+  // Body
+  document.getElementById("emoji-display").textContent = e.emoji;
+  document.getElementById("fact-text").textContent = e.fact;
+  document.getElementById("source-text").textContent = "— " + e.source;
+  document.getElementById("hebrew-count").textContent = e.hCount;
+  document.getElementById("hebrew-weeks").textContent = e.hWeeks;
+
+  // Card background & border colour
+  const card = document.getElementById("card");
+  const cardTop = document.getElementById("card-top");
+  const hbox = document.getElementById("hebrew-box");
+  if (e.day === 33 || e.day === 49) {
+    card.style.background = "#FFF9D0";
+    card.style.borderColor = "#B37700";
+    cardTop.style.background = "#F5C842";
+    hbox.style.borderLeftColor = "#B37700";
+  } else if (e.day % 7 === 0) {
+    card.style.background = "#FFF3D0";
+    card.style.borderColor = "#C47F00";
+    cardTop.style.background = "#E8A000";
+    hbox.style.borderLeftColor = "#C47F00";
+  } else {
+    card.style.background = "#FFF8E7";
+    card.style.borderColor = "#E8A000";
+    cardTop.style.background = "#E8A000";
+    hbox.style.borderLeftColor = "#E8A000";
+  }
+
+  // Nav buttons
+  document.getElementById("prev-btn").disabled = (viewDay <= 1);
+  document.getElementById("next-btn").disabled = (viewDay >= 49);
+
+  // Today button
+  const todayBtn = document.getElementById("today-btn");
+  const inRange = (todayOmer >= 1 && todayOmer <= 49);
+  if (inRange && !isToday) {
+    todayBtn.style.display = "block";
+    document.getElementById("today-day-num").textContent = todayOmer;
+  } else {
+    todayBtn.style.display = "none";
+  }
+
+  // Progress
+  document.getElementById("prog-left").textContent = `Day ${viewDay}`;
+  document.getElementById("prog-right").textContent = `${Math.round((viewDay/49)*100)}% to Shavuot`;
+  document.getElementById("progress-fill").style.width = `${(viewDay/49)*100}%`;
+
+  // Dot buttons
+  document.querySelectorAll(".dot-btn").forEach(btn => {
+    const d = parseInt(btn.dataset.day);
+    btn.classList.remove("active");
+    if (d === viewDay) btn.classList.add("active");
+  });
+}
+
+function changeDay(delta) {
+  const next = viewDay + delta;
+  if (next < 1 || next > 49) return;
+  viewDay = next;
+  render();
+  // scroll active dot into view
+  const activeDot = document.querySelector(".dot-btn.active");
+  if (activeDot) activeDot.scrollIntoView({ inline: "center", behavior: "smooth", block: "nearest" });
+}
+
+function goToToday() {
+  if (todayOmer >= 1 && todayOmer <= 49) { viewDay = todayOmer; render(); }
+}
+
+// ── Build dot buttons ─────────────────────────────────────────────────────────
+(function buildDots() {
+  const inner = document.getElementById("dots-inner");
+  for (let d = 1; d <= 49; d++) {
+    const btn = document.createElement("button");
+    btn.className = "dot-btn " + (d % 7 === 0 ? "shabbat" : "regular");
+    btn.dataset.day = d;
+    btn.textContent = d;
+    btn.addEventListener("click", () => { viewDay = d; render(); btn.scrollIntoView({ inline: "center", behavior: "smooth", block: "nearest" }); });
+    inner.appendChild(btn);
+  }
+})();
+
+// ── Status banner (pre/post Omer) ─────────────────────────────────────────────
+(function showBanner() {
+  const banner = document.getElementById("status-banner");
+  if (todayOmer === 0) {
+    banner.className = "pre";
+    banner.style.display = "block";
+    document.getElementById("banner-emoji").textContent = "🌾";
+    document.getElementById("banner-title").textContent = "The Omer hasn't started yet";
+    document.getElementById("banner-body").textContent = "Counting begins the evening of Thursday, April 2, 2026. Preview any day below.";
+  } else if (todayOmer === 50) {
+    banner.className = "post";
+    banner.style.display = "block";
+    document.getElementById("banner-emoji").textContent = "🌾✨";
+    document.getElementById("banner-title").textContent = "Chag Sameach! The Omer is complete!";
+    document.getElementById("banner-body").textContent = "Shavuot has arrived — may the Torah always be with you.";
+  }
+})();
+
+// ── Initial view: jump to today if in range ───────────────────────────────────
+if (todayOmer >= 1 && todayOmer <= 49) viewDay = todayOmer;
+render();
+
+// ── Touch / swipe ─────────────────────────────────────────────────────────────
+let touchStartX = null;
+const card = document.getElementById("card");
+card.addEventListener("touchstart", e => { touchStartX = e.touches[0].clientX; }, { passive: true });
+card.addEventListener("touchend", e => {
+  if (touchStartX === null) return;
+  const diff = touchStartX - e.changedTouches[0].clientX;
+  if (Math.abs(diff) > 50) changeDay(diff > 0 ? 1 : -1);
+  touchStartX = null;
+});
+
+// ── Keyboard navigation ───────────────────────────────────────────────────────
+document.addEventListener("keydown", e => {
+  if (e.key === "ArrowLeft")  changeDay(-1);
+  if (e.key === "ArrowRight") changeDay(1);
+});
+</script>
+</body>
+</html>
